@@ -47,8 +47,8 @@ class Cloth:
         self.parts=[False,False,False,False,False]
         self.init_source()
     def test_file(self,f:batch_remane.PathFile):
-        if f.name in clothid.keys():
-            self.id=f.name
+        if f.name[2:] in clothid.keys():
+            self.id=f.name[2:]
             self.count=self.count+1
         elif os.path.isdir(f.full) and f.name in cloth_parts:
             self.parts[cloth_parts.index(f.name)]=True
@@ -74,6 +74,11 @@ for item in os.listdir(source_path):
     else:
         print("illegal:"+item)
 
+def cloth_change(origin:Cloth,to:Clothid):
+    clothid[origin.id].remove_usage(origin)
+    to.add_usage(origin)
+    batch_remane.batch_rename(origin.source,origin.id,to.id)
+    origin.id=to.id
 
 if __name__=="__main__":
     print(clothid)

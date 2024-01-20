@@ -77,6 +77,10 @@ class App(tk.Tk):
             self.clothid_text_list.append(item)
     def choose_clothid(self,id):
         self.show_clothid(core.clothid[self.clothid_text_list[id]])
+    def rename(self,clothindex,clothidindex):
+        core.cloth_change(core.cloths[clothindex],core.clothid[clothidindex])
+        self.load_cloth_list()
+        self.load_clothid_list()
     def create_clothid_panel(self):
         frame=tk.Frame(self)
         self.clothid_list=tk.Listbox(frame,width=50)
@@ -84,7 +88,7 @@ class App(tk.Tk):
         self.clothid_list.bind('<Double-Button-1>',lambda evt:self.choose_clothid(self.clothid_list.curselection()[0]))
         self.load_clothid_list()
         self.clothid_list.pack()
-        tk.Button(frame,text="Refresh",command=self.load_clothid_list).pack(side=tk.BOTTOM)
+        tk.Button(frame,text="Change",command=lambda:self.rename(self.cloth_list.curselection()[0],self.clothid_list.curselection()[0])).pack(side=tk.BOTTOM)
         frame.pack(side=tk.RIGHT)
 
 
