@@ -59,10 +59,9 @@ class Cloth:
             return
         clothid[self.id].add_usage(self)
         self.preview=None
-        if "preview.png" in os.listdir(self.source):
-            self.preview=Image.open(os.path.join(self.source,"preview.png")).resize((200,200))
-        if "preview.jpg" in os.listdir(self.source):
-            self.preview=Image.open(os.path.join(self.source,"preview.jpg")).resize((200,200))
+        for item in os.listdir(self.source):
+            if item.split(".")[-1] in ["png","jpg"]:
+                self.preview=Image.open(os.path.join(self.source,item)).resize((200,200))
     def __str__(self) -> str:
         return self.name
     def __repr__(self) -> str:
