@@ -30,6 +30,7 @@ def rename(f,old_name,new_name):
 		f.full=nm
 
 def batch_rename(file,old_name,new_name):
+	print(old_name+"->"+new_name)
 	traverse(file,lambda f:rename(f,old_name,new_name))
 
 if __name__=="__main__":

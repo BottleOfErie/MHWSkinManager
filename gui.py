@@ -20,6 +20,8 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("MHW skin manager")
+        self.choosed_cloth=None
+        self.choosed_clothid=None
         self.create_cloth_panel()
         self.create_clothid_panel()
         self.create_main_panel()
@@ -60,13 +62,17 @@ class App(tk.Tk):
         for item in core.cloths:
             self.cloth_list.insert(tk.END,item)
     def choose_cloth(self,id):
+        self.choosed_cloth=core.cloths[id]
         self.show_cloth(core.cloths[id])
     def create_cloth_panel(self):
         frame=tk.Frame(self)
-        self.cloth_list=tk.Listbox(frame,width=50)
+        self.cloth_list=tk.Listbox(frame,width=25)
         self.cloth_list.bind('<Double-Button-1>',lambda evt:self.choose_cloth(self.cloth_list.curselection()[0]))
         self.load_cloth_list()
-        self.cloth_list.pack()
+        sb=tk.Scrollbar(frame,command=self.cloth_list.yview)
+        self.cloth_list.config(yscrollcommand=sb.set)
+        self.cloth_list.pack(side=tk.LEFT,fill=tk.BOTH)
+        sb.pack(side=tk.RIGHT,fill=tk.BOTH)
         tk.Button(frame,text="Refresh",command=self.load_cloth_list).pack(side=tk.BOTTOM)
         frame.pack(side=tk.LEFT)
     def load_clothid_list(self):
@@ -76,19 +82,28 @@ class App(tk.Tk):
             self.clothid_list.insert(tk.END,core.clothid[item])
             self.clothid_text_list.append(item)
     def choose_clothid(self,id):
+        self.choosed_clothid=core.clothid[self.clothid_text_list[id]]
         self.show_clothid(core.clothid[self.clothid_text_list[id]])
-    def rename(self,clothindex,clothidindex):
-        core.cloth_change(core.cloths[clothindex],core.clothid[clothidindex])
+    def rename(self):
+        if self.choosed_cloth==None or self.choosed_clothid==None:
+            return
+        core.cloth_change(self.choosed_cloth,self.choosed_clothid)
+        self.show_cloth(self.choosed_cloth)
+        self.show_clothid(self.choosed_clothid)
         self.load_cloth_list()
         self.load_clothid_list()
     def create_clothid_panel(self):
         frame=tk.Frame(self)
-        self.clothid_list=tk.Listbox(frame,width=50)
+        self.clothid_list=tk.Listbox(frame,width=25)
         self.clothid_text_list=[]
         self.clothid_list.bind('<Double-Button-1>',lambda evt:self.choose_clothid(self.clothid_list.curselection()[0]))
         self.load_clothid_list()
-        self.clothid_list.pack()
-        tk.Button(frame,text="Change",command=lambda:self.rename(self.cloth_list.curselection()[0],self.clothid_list.curselection()[0])).pack(side=tk.BOTTOM)
+        sb=tk.Scrollbar(frame,command=self.clothid_list.yview)
+        self.clothid_list.config(yscrollcommand=sb.set)
+        self.clothid_list.pack(side=tk.LEFT,fill=tk.BOTH)
+        sb.pack(side=tk.RIGHT,fill=tk.BOTH)
+        tk.Button(frame,text="Change",command=self.rename).pack(side=tk.BOTTOM)
+        tk.Button(frame,text="Deploy",command=core.cloth_deploy_all).pack(side=tk.BOTTOM)
         frame.pack(side=tk.RIGHT)
 
 

@@ -2,6 +2,7 @@
 import os.path
 import batch_remane
 from PIL import Image
+from distutils.dir_util import copy_tree
 
 source_path="./source"
 deploy_path='./deploy'
@@ -80,5 +81,12 @@ def cloth_change(origin:Cloth,to:Clothid):
     batch_remane.batch_rename(origin.source,origin.id,to.id)
     origin.id=to.id
 
+def cloth_deploy(cloth:Cloth):
+    copy_tree(os.path.join(cloth.source,"nativePC"),deploy_path)
+
+def cloth_deploy_all():
+    for i in cloths:
+        cloth_deploy(i)
+
 if __name__=="__main__":
-    print(clothid)
+    print("")
