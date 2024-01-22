@@ -13,8 +13,9 @@ def get_part_label(root,parts):
         label.pack(side=tk.LEFT)
     return frame
 
+imagesize=500
 tkimageobj=None
-noneimage=Image.open("./none.jpg")
+noneimage=Image.open("./none.jpg").resize((imagesize,imagesize))
 
 class App(tk.Tk):
     def __init__(self):
@@ -31,6 +32,11 @@ class App(tk.Tk):
         self.cloth_frame.pack()
         self.clothid_frame=tk.Frame(frame,height=200)
         self.clothid_frame.pack()
+        self.button_frame=tk.Frame(frame,height=200)
+        tk.Button(self.button_frame,text="RefreshClothes",command=self.load_cloth_list).pack(side=tk.RIGHT)
+        tk.Button(self.button_frame,text="Change",command=self.rename).pack(side=tk.RIGHT)
+        tk.Button(self.button_frame,text="Deploy",command=core.cloth_deploy_all).pack(side=tk.RIGHT)
+        self.button_frame.pack()
         frame.pack()
     def clear_cloth_frame(self):
         for widget in self.cloth_frame.winfo_children():
@@ -45,11 +51,12 @@ class App(tk.Tk):
         get_part_label(self.cloth_frame,item.parts).pack()
         global tkimageobj
         if(not item.preview==None):
-            tkimageobj=ImageTk.PhotoImage(item.preview,size=(200,200))
-            tk.Label(self.cloth_frame,image=tkimageobj,height=200,width=200).pack()
+            ratio=min(imagesize/item.preview.width,imagesize/item.preview.height)
+            tkimageobj=ImageTk.PhotoImage(item.preview.resize((int(item.preview.width*ratio),int(item.preview.height*ratio))))
+            tk.Label(self.cloth_frame,image=tkimageobj,height=imagesize,width=imagesize).pack()
         else:
             tkimageobj=ImageTk.PhotoImage(noneimage)
-            tk.Label(self.cloth_frame,image=tkimageobj,height=200,width=200).pack()
+            tk.Label(self.cloth_frame,image=tkimageobj,height=imagesize,width=imagesize).pack()
     def show_clothid(self,item:core.Clothid):
         self.clear_clothid_frame()
         tk.Label(self.clothid_frame,text="Name:"+item.name).pack()
@@ -73,7 +80,6 @@ class App(tk.Tk):
         self.cloth_list.config(yscrollcommand=sb.set)
         self.cloth_list.pack(side=tk.LEFT,fill=tk.BOTH)
         sb.pack(side=tk.RIGHT,fill=tk.BOTH)
-        tk.Button(frame,text="Refresh",command=self.load_cloth_list).pack(side=tk.BOTTOM)
         frame.pack(side=tk.LEFT)
     def load_clothid_list(self):
         self.clothid_list.delete(0,tk.END)
@@ -102,8 +108,6 @@ class App(tk.Tk):
         self.clothid_list.config(yscrollcommand=sb.set)
         self.clothid_list.pack(side=tk.LEFT,fill=tk.BOTH)
         sb.pack(side=tk.RIGHT,fill=tk.BOTH)
-        tk.Button(frame,text="Change",command=self.rename).pack(side=tk.BOTTOM)
-        tk.Button(frame,text="Deploy",command=core.cloth_deploy_all).pack(side=tk.BOTTOM)
         frame.pack(side=tk.RIGHT)
 
 

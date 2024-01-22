@@ -50,7 +50,7 @@ class Cloth:
         self.id=[]
         self.init_source()
     def test_file(self,f:batch_remane.PathFile):
-        if f.name[2:] in clothid.keys():
+        if f.name[0]=='p' and f.name[1]=='l' and f.name[2:] in clothid.keys():
             self.id.append(f.name[2:])
             self.count=self.count+1
         elif os.path.isdir(f.full) and f.name in cloth_parts:
@@ -68,7 +68,7 @@ class Cloth:
         self.preview=None
         for item in os.listdir(self.source):
             if item.split(".")[-1] in ["png","jpg"]:
-                self.preview=Image.open(os.path.join(self.source,item)).resize((200,200))
+                self.preview=Image.open(os.path.join(self.source,item))
         self.islegal=True
     def __str__(self) -> str:
         return self.name
