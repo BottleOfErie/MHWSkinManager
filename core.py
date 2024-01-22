@@ -46,23 +46,30 @@ class Cloth:
         self.source=os.path.join(source_path,source)
         self.count=0
         self.parts=[False,False,False,False,False]
+        self.islegal=False
+        self.id=[]
         self.init_source()
     def test_file(self,f:batch_remane.PathFile):
         if f.name[2:] in clothid.keys():
-            self.id=f.name[2:]
+            self.id.append(f.name[2:])
             self.count=self.count+1
         elif os.path.isdir(f.full) and f.name in cloth_parts:
             self.parts[cloth_parts.index(f.name)]=True
             
     def init_source(self):
-        batch_remane.traverse(os.path.join(self.source,"nativePC"),lambda f:self.test_file(f))
-        if self.count>1:
+        nativePC=os.path.join(self.source,"nativePC")
+        if not os.path.isdir(nativePC):
             return
+        batch_remane.traverse(nativePC,lambda f:self.test_file(f))
+        if self.count>1 or len(self.id)!=1:
+            return
+        self.id=self.id[0]
         clothid[self.id].add_usage(self)
         self.preview=None
         for item in os.listdir(self.source):
             if item.split(".")[-1] in ["png","jpg"]:
                 self.preview=Image.open(os.path.join(self.source,item)).resize((200,200))
+        self.islegal=True
     def __str__(self) -> str:
         return self.name
     def __repr__(self) -> str:
@@ -70,7 +77,7 @@ class Cloth:
 
 for item in os.listdir(source_path):
     tmp=Cloth(item)
-    if tmp.count==1:
+    if tmp.islegal:
         cloths.append(tmp)
     else:
         print("illegal:"+item)
