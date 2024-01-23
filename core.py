@@ -7,6 +7,7 @@ from distutils.dir_util import copy_tree
 source_path="./source"
 deploy_path='./deploy'
 cloth_parts=["helm","body","arm","wst","leg"]
+authors=["mangie","AragakiSama"]
 
 cloths=[]
 clothid={}
@@ -49,6 +50,7 @@ class Cloth:
         self.parts=[False,False,False,False,False]
         self.islegal=False
         self.id=[]
+        self.author=[]
         self.marked=False
         self.ignored=False
         self.init_source()
@@ -57,6 +59,9 @@ class Cloth:
             if not f.full[len(self.source):] in files.keys():
                 files[f.full[len(self.source):]]=[]
             files[f.full[len(self.source):]].append(self)
+        for item in authors:
+            if not item in self.author and item in f.name:
+                self.author.append(item)
         if f.name[0]=='p' and f.name[1]=='l' and f.name[2:] in clothid.keys():
             self.id.append(f.name[2:])
             self.count=self.count+1

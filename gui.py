@@ -57,6 +57,7 @@ class App(tk.Tk):
             name.configure(bg="red")
         name.pack()
         tk.Label(self.cloth_frame,text="Usage:"+str(core.clothid[item.id])).pack()
+        tk.Label(self.cloth_frame,text="Author:"+str(item.author)).pack()
         get_part_label(self.cloth_frame,item.parts).pack()
         global tkimageobj
         if(not item.preview==None):
