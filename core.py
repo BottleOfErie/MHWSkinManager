@@ -10,6 +10,7 @@ cloth_parts=["helm","body","arm","wst","leg"]
 
 cloths=[]
 clothid={}
+files={}
 
 
 class Clothid:
@@ -48,8 +49,14 @@ class Cloth:
         self.parts=[False,False,False,False,False]
         self.islegal=False
         self.id=[]
+        self.marked=False
+        self.ignored=False
         self.init_source()
     def test_file(self,f:batch_remane.PathFile):
+        if not os.path.isdir(f.full):
+            if not f.full[len(self.source):] in files.keys():
+                files[f.full[len(self.source):]]=[]
+            files[f.full[len(self.source):]].append(self)
         if f.name[0]=='p' and f.name[1]=='l' and f.name[2:] in clothid.keys():
             self.id.append(f.name[2:])
             self.count=self.count+1
@@ -67,7 +74,7 @@ class Cloth:
         clothid[self.id].add_usage(self)
         self.preview=None
         for item in os.listdir(self.source):
-            if item.split(".")[-1] in ["png","jpg"]:
+            if item.split(".")[-1].lower() in ["png","jpg"]:
                 self.preview=Image.open(os.path.join(self.source,item))
         self.islegal=True
     def __str__(self) -> str:
@@ -79,6 +86,8 @@ for item in os.listdir(source_path):
     tmp=Cloth(item)
     if tmp.islegal:
         cloths.append(tmp)
+        if tmp.preview==None:
+            print("no preview:"+item)
     else:
         print("illegal:"+item)
 
@@ -93,7 +102,10 @@ def cloth_deploy(cloth:Cloth):
 
 def cloth_deploy_all():
     for i in cloths:
-        cloth_deploy(i)
+        if not i.ignored:
+            cloth_deploy(i)
 
 if __name__=="__main__":
-    print("")
+    for item in files.keys():
+        if len(files[item])>1:
+            print(item,files[item])
