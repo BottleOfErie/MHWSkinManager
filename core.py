@@ -43,9 +43,13 @@ with open("./clothes.txt","r",encoding="utf-8") as file:
 
 
 class Cloth:
-    def __init__(self,source):
-        self.name=source
-        self.source=os.path.join(source_path,source)
+    def __init__(self,source,absolute=False):
+        if absolute:
+            self.name="Unknown"
+            self.source=source
+        else:
+            self.name=source
+            self.source=os.path.join(source_path,source)
         self.count=0
         self.parts=[False,False,False,False,False]
         self.islegal=False
