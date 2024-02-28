@@ -2,8 +2,8 @@ import batch_remane
 import shutil
 import os
 
-goodname=""
-filedir=""
+goodname="skin_d.tex"
+filedir="E:\Vortex Mods\monsterhunterworld\deploy"
 replacer=""
 
 lst=[]
@@ -25,8 +25,8 @@ def old_rename(file:batch_remane.PathFile):
     print(f"{file.full}->{rename0(file,i)}")
     os.rename(file.full,rename0(file,i))
 
-goodname=input("Name:")
-filedir=input("TargetDirectory:")
+# goodname=input("Name:")
+# filedir=input("TargetDirectory:")
 batch_remane.traverse(filedir,replace)
 print(lst)
 replacer=input("Replacer:")

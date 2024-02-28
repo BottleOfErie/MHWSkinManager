@@ -104,7 +104,9 @@ class App(tk.Tk):
         i=0
         for item in core.clothid.keys():
             self.clothid_list.insert(tk.END,core.clothid[item])
-            if len(core.clothid[item].usage)>1:
+            if len(core.clothid[item].usage)==1:
+                self.clothid_list.itemconfigure(i,bg="yellow")
+            elif len(core.clothid[item].usage)>1:
                 self.clothid_list.itemconfigure(i,bg="red")
             self.clothid_text_list.append(item)
             i=i+1
@@ -129,11 +131,7 @@ class App(tk.Tk):
     def ignore_or_not(self):
         if self.choosed_cloth==None:
             return
-        if self.choosed_cloth.ignored:
-            core.clothid[self.choosed_cloth.id].add_usage(self.choosed_cloth)
-        if not self.choosed_cloth.ignored:
-            core.clothid[self.choosed_cloth.id].remove_usage(self.choosed_cloth)
-        self.choosed_cloth.ignored=not self.choosed_cloth.ignored
+        core.cloth_ignore(self.choosed_cloth)
         self.show_cloth(self.choosed_cloth)
         self.load_cloth_list()
         self.load_clothid_list()

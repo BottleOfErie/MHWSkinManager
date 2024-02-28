@@ -53,6 +53,7 @@ class Cloth:
         self.author=[]
         self.marked=False
         self.ignored=False
+        self.preview=None
         self.init_source()
     def test_file(self,f:batch_remane.PathFile):
         if not os.path.isdir(f.full):
@@ -77,10 +78,11 @@ class Cloth:
             return
         self.id=self.id[0]
         clothid[self.id].add_usage(self)
-        self.preview=None
         for item in os.listdir(self.source):
             if item.split(".")[-1].lower() in ["png","jpg"]:
                 self.preview=Image.open(os.path.join(self.source,item))
+            if item=="ignored_mark":
+                self.ignored=True
         self.islegal=True
     def __str__(self) -> str:
         return self.name
@@ -104,6 +106,16 @@ def cloth_change(origin:Cloth,to:Clothid):
 
 def cloth_deploy(cloth:Cloth):
     copy_tree(os.path.join(cloth.source,"nativePC"),deploy_path)
+
+def cloth_ignore(cloth:Cloth):
+    markpath=os.path.join(cloth.source,"ignored_mark")
+    if cloth.ignored:
+        clothid[cloth.id].add_usage(cloth)
+        os.remove(markpath)
+    else:
+        clothid[cloth.id].remove_usage(cloth)
+        open(markpath,"x").close()
+    cloth.ignored=not cloth.ignored
 
 def cloth_deploy_all():
     for i in cloths:
