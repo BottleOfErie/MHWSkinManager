@@ -2,10 +2,14 @@ import batch_remane
 import subprocess
 import os
 import shutil
+import psutil
 
 tempfolder="./temp"
 tempfile="./tempfile"
+mhw_process_name="MonsterHunterWorld.exe"
+
 deploy_location=""
+mhw_executable_location=""
 old_id=[]
 files=[]
 new_id=""
@@ -60,6 +64,7 @@ def analyze():
 
 def deploy():
     for dpfile in files:
+        print(f'{dpfile.path}->{dpfile.deploy_path}')
         if dpfile.isdir:
             if not dpfile.exist:
                 os.mkdir(dpfile.deploy_path)
@@ -75,6 +80,7 @@ def deploy():
 
 def undo_deploy():
     for dpfile in reversed(files):
+        print(f'{dpfile.deploy_path}')
         if dpfile.isdir:
             if dpfile.remove_flag:
                 os.rmdir(dpfile.deploy_path)
@@ -84,9 +90,20 @@ def undo_deploy():
                 shutil.move(dpfile.path,dpfile.deploy_path)
     return
 
+def try_run():
+    _=subprocess.Popen(f'"{mhw_executable_location}"')
+    print(f"Started PID:{_.pid}")
+    input("Press [Enter] to stop")
+    # _.kill()
+    for proc in [item for item in psutil.process_iter(['name']) if item.info['name'] == mhw_process_name]:
+        print(f"Targeted PID:{proc.pid}")
+        proc.kill()
+    print("Waiting...")
+
 if __name__=="__main__":
     deploy_location=input("nativePC:")
     new_id=input("ClothID to replace:")
+    mhw_executable_location=input("MonsterHunterWorld.exe:")
     target=input("zipfile:")
     while len(target)!=0:
         print("========Unzip")
@@ -95,6 +112,15 @@ if __name__=="__main__":
         analyze()
         print("========Deploy")
         deploy()
-        target=input("zipfile:")
+        try:
+            if mhw_executable_location!="":
+                print("========StartingGame")
+                try_run()
+            target=input("zipfile:")
+        except Exception as e:
+            print("========Error")
+            print(e)
+            target=""
         print("========Undo")
         undo_deploy()
+    input("Press [Enter] to exit")
