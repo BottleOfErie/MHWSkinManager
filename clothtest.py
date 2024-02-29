@@ -53,14 +53,15 @@ def analyze():
     batch_remane.traverse(tempfolder,dfs1)
     if nativePC=="":
         print("No nativePC folder!")
-        return
+        return False
     if len(old_id)!=1:
         print(f"clothID count:{len(old_id)}({str(old_id)})!")
-        return
+        return False
     batch_remane.batch_rename(nativePC,old_id[0],new_id)
     global files
     files=[]
     batch_remane.traverse(nativePC,dfs2)
+    return True
 
 def deploy():
     for dpfile in files:
@@ -109,18 +110,20 @@ if __name__=="__main__":
         print("========Unzip")
         unzip(target)
         print("========Analyze")
-        analyze()
-        print("========Deploy")
-        deploy()
-        try:
-            if mhw_executable_location!="":
-                print("========StartingGame")
-                try_run()
-            target=input("zipfile:")
-        except Exception as e:
-            print("========Error")
-            print(e)
-            target=""
+        if not analyze():
+            files=[]
+        else:
+            print("========Deploy")
+            deploy()
+            try:
+                if mhw_executable_location!="":
+                    print("========StartingGame")
+                    try_run()
+            except Exception as e:
+                print("========Error")
+                print(e)
+                target=""
+        target=input("zipfile:")
         print("========Undo")
         undo_deploy()
     input("Press [Enter] to exit")
