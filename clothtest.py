@@ -111,6 +111,7 @@ if __name__=="__main__":
         unzip(target)
         print("========Analyze")
         if not analyze():
+            print("Illegal ClothID in zipfile")
             files=[]
         else:
             print("========Deploy")
